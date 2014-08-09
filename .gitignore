@@ -1,0 +1,8 @@
+venv
+*.pyc
+*~
+*.swp
+staticfiles
+db.sqlite3
+.ropeproject
+.secretgithistory

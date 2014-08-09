@@ -1,0 +1,9 @@
+{% if contact_list %}
+  <ul>
+    {% for contact in contact_list %}
+      <li> Contact {{contact.first_name}} {{contact.last_name}} has number {{contact.phone_number}} </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p> No contacts exists with the name {{name}}. </p>
+{% endif %}
