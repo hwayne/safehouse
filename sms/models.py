@@ -6,4 +6,4 @@ class Message(models.Model):
 
     def __str__(self):
         return "{}: {}".format(self.phone_number, self.message)
-# Create your models here.
+

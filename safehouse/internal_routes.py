@@ -1,6 +1,6 @@
 from panic.views import random, inform
-from collections import defaultdict
 from functools import partial
+from collections import defaultdict
 
 """This file contains all of the views that request types can call.
    AKA an sms request can call panic, etc."""

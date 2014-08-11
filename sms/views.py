@@ -14,7 +14,6 @@ from sms.utils import parse_message, clean_number, log_message
 def index(request):
     from_number = clean_number(request.POST.get('From', '0'))
     message = request.POST.get('Body', '')
-    #log_message(from_number, request.build_absolute_uri())
     log_message(from_number, message)  # for posterity!
 
     request.META['CONTENT_TYPE'] = 'internal'  # BAM

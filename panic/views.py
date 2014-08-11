@@ -35,24 +35,20 @@ def test(request):
 def random(request, count=DEFAULT_PANIC_COUNT):
     contact_list = Contact.objects.sample(count)
 
-    templater = get_templater('panic/panic.html')
+    templater = get_templater('sms/panic.html')
     return response_from_type(request, contact_list, templater)
 
 def inform(request):
-    contact_list = Contact.objects.filter(informed=False)
+    contact_list = Contact.objects.inform_all()
     if not contact_list:
         return HttpResponse("No Uninformed")
-    for c in contact_list:
-        c.informed = True
-        c.save()
 
-    templater = get_templater('panic/message.html')
+    templater = get_templater('sms/message.html')
     return response_from_type(request, contact_list, templater)
 
 @csrf_exempt # internally called only
 def response_from_type(request, contacts, templater):
     request_type = request.META.get('CONTENT_TYPE', 'html')
-    messages = dict()
 
     # Used by an SMS or email route
     if 'internal' in request_type:

@@ -4,7 +4,6 @@ environ['MY_NUMBER'] = '6655321'
 environ['TWILIO_NUMBER'] = '15005550006'
 environ['DJANGO_DEBUG'] = 'True'
 
-from unittest import skip
 from unittest.mock import Mock, patch
 from django.test import TestCase, Client, RequestFactory
 import sms.views as view
@@ -15,7 +14,14 @@ class SmsViewsTestCase(TestCase):
 
     def setUp(self):
         self.fake_num = '15005550006'
+        self.request = RequestFactory()
         self.c = Client()
+
+
+class SmsLoggingTestCase(SmsViewsTestCase):
+
+    def setup(self):
+        super().setUp()
 
     def testLogMessageIfNotFromUserNumber(self):
         self.c.post('/sms/', {'From': self.fake_num})
@@ -41,23 +47,16 @@ class SmsViewsTestCase(TestCase):
                          '{}: message'.format(self.fake_num))
 
 
-    @skip("Refactoring nologging")
-    def testDoesntLogMessageIfValidRoute(self):
-        self.c.post('/sms/', {'From': view.MY_NUMBER, 'Body': 'Panic 17'})
-        self.assertEqual(Message.objects.count(), 0)
-
-
 class SmsRoutingTestCase(SmsViewsTestCase):
 
     def setUp(self):
         super().setUp()
-        self.request = RequestFactory()
         view.SMS_ROUTES['valid'] = Mock()
         view.SMS_ROUTES.pop('invalid', None)
 
     def testGetsBlackHoleIfInvalidRoute(self):
         self.c.post('/sms/', {'From': view.MY_NUMBER, 'Body': 'invalid 17'})
-        pass # no error
+        pass  # no error
 
     def testCallsViewIfValidRoute(self):
         self.c.post('/sms/', {'From': view.MY_NUMBER, 'Body': 'valid 17'})
