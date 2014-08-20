@@ -7,10 +7,6 @@ from django_twilio.client import twilio_client
 from sms.utils import parse_message, clean_number
 from sms.models import log_message
 
-# from twilio.twiml import Response
-# from django.template import RequestContext, loader
-
-
 
 @twilio_view
 def index(request):
@@ -18,11 +14,9 @@ def index(request):
     message = request.POST.get('Body', '')
     log_message(from_number, message)  # for posterity!
 
-    request.META['CONTENT_TYPE'] = 'internal'  # BAM
-
     route = parse_message(message)
     route_function = ROUTES[route['route']]
-    if from_number == MY_NUMBER and route_function:
+    if from_number == MY_NUMBER:
         response = route_function(*route['args'])
     else:
         response = forward_message_to_me(from_number, message)
@@ -32,13 +26,13 @@ def index(request):
     return HttpResponse("Complete.")
 
 
-def forward_message_to_me(number, message):
+def forward_message_to_me(number, message):  # TODO Make this a route.
     return {MY_NUMBER: "{}: {}".format(number, message)}
 
 
-def sendsms(request, message_dict):
+def sendsms(request, message_dict):  # Reason it needs a response?
     if DEBUG:
-        #pass  # For local testing- disable to prevent twilios
+        # pass # For local testing- disable to prevent twilios
         return HttpResponse('Debug')
     for number, message in message_dict.items():
         twilio_client.messages.create(

@@ -20,6 +20,9 @@ class RoutesTestCase(TestCase):
     def testCallsPanic(self):
         self.assertEqual(ROUTES['panic'], routes.panic)
 
+    def testCallssay(self):
+        self.assertEqual(ROUTES['say'], routes.say)
+
 
 class ReflectTestCase(TestCase):
 
@@ -61,6 +64,7 @@ class InformTestCase(TestCase):
         routes.inform()
         mock.assert_called_with('inform')
 
+
 class PanicTestCase(TestCase):
 
     @patch('sms.routes.Contact.objects.sample')
@@ -70,7 +74,7 @@ class PanicTestCase(TestCase):
 
     @patch('sms.routes.Contact.objects.sample')
     def testPanicCallsSampleWithCount(self, mock):
-        routes.panic(10, 'lizard')
+        routes.panic(10)
         mock.assert_called_with(10)
 
     @patch('sms.routes.get_templater')
@@ -78,3 +82,19 @@ class PanicTestCase(TestCase):
         routes.panic()
         mock.assert_called_with('panic')
 
+
+class SayTestCase(TestCase):
+
+    @patch('sms.routes.get_templater')
+    @patch('sms.routes.Contact.objects.sample')
+    def testSayHasDefaultParams(self, mock_sample, mock_template):
+        routes.say()
+        mock_sample.assert_called_with(routes.DEFAULT_MESSAGE_COUNT)
+        mock_template.assert_called_with('talk')
+
+    @patch('sms.routes.get_templater')
+    @patch('sms.routes.Contact.objects.sample')
+    def testSayHasCallableParams(self, mock_sample, mock_template):
+        routes.say('YESOCH', 10)
+        mock_sample.assert_called_with(10)
+        mock_template.assert_called_with('yesoch')
