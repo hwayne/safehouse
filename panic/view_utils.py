@@ -4,7 +4,7 @@ from django.template import Context, loader
 from panic.env import MY_NUMBER, MY_NAME
 
 
-def get_templater(template_url='panic/message.html'):
+def get_templater(template_url='sms/inform.html'):
     context_maker = lambda contact: Context({'name': contact.first_name,
                                              'my_number': MY_NUMBER,
                                              'my_name': MY_NAME})

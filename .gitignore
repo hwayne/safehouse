@@ -6,3 +6,5 @@ staticfiles
 db.sqlite3
 .ropeproject
 .secretgithistory
+.DS_Store
+ngrok

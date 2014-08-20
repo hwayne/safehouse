@@ -4,11 +4,33 @@ from django.db import models
 class ContactManager(models.Manager):
 
     def sample(self, count):
+        """ Efficient random selection of contacts.
+
+        We have this because randomly ordering the database is insanely slow.
+        We use to ensure that when hitting the panic button, we don't know
+        who it alerted, so we don't feel shunned if they don't respond.
+        Does not get uninformed people.
+        """
+
         from random import sample
 
         indices = list(self.all().values_list('id', flat=True))
         sampled_indices = sample(indices, min(int(count), len(indices)))
         return self.filter(id__in=sampled_indices, informed=True)
+
+    def inform_all(self):
+        """ Sets people as notified, returns list of who changed.
+
+        Contacts start out as uninformed, aka they don't know about Safehouse.
+        Since panicking at people would be weird, they never get 'normal'
+        messages. Call inform_all to set them as "will get an informational
+        text from safehouse." sms uses this to find who to text.
+        """
+        uninformed = self.filter(informed=False)
+        for u in uninformed:
+            u.informed = True
+            u.save()
+        return uninformed
 
 
 class Contact(models.Model):
