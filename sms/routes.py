@@ -7,11 +7,11 @@ from panic.models import Contact  # COUPLING
 from sms.utils import MY_NUMBER, get_templater
 from collections import defaultdict
 
-DEFAULT_MESSAGE_COUNT=3
+DEFAULT_MESSAGE_COUNT = 3
 
 
 def build_message_dict(contacts, template):
-    return {c.phone_number:template(c) for c in contacts}
+    return {c.phone_number: template(c) for c in contacts}
 
 
 def inform(*args):
@@ -20,14 +20,22 @@ def inform(*args):
     return build_message_dict(contacts_to_inform, get_templater('inform'))
 
 
-def panic(*args):
-    """ Tell people I'm not okay. """
-    try:
-        count = int(args[0])
-    except:
-        count = DEFAULT_MESSAGE_COUNT
+def panic(count=DEFAULT_MESSAGE_COUNT):
+    """ say people I'm not okay.
+
+        Takes a count."""
+
     contacts_to_panic = Contact.objects.sample(count)
     return build_message_dict(contacts_to_panic, get_templater('panic'))
+
+
+def say(template="talk", count=DEFAULT_MESSAGE_COUNT):
+    """ Arbitrary template finder and messager.
+
+        Takes a template name, count, outputs dict. """
+
+    contacts_to_say = Contact.objects.sample(count)
+    return build_message_dict(contacts_to_say, get_templater(template.lower()))
 
 
 def reflect(*args):
@@ -37,4 +45,5 @@ def reflect(*args):
 ROUTES = defaultdict(lambda: reflect)
 ROUTES.update({"inform": inform,
                "panic": panic,
+               "say": say,
                })
