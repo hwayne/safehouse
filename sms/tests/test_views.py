@@ -51,8 +51,8 @@ class SmsRoutingTestCase(SmsViewsTestCase):
 
     def setUp(self):
         super().setUp()
-        view.SMS_ROUTES['valid'] = Mock()
-        view.SMS_ROUTES.pop('invalid', None)
+        view.ROUTES['valid'] = Mock()
+        view.ROUTES.pop('invalid', None)
 
     def testGetsBlackHoleIfInvalidRoute(self):
         self.c.post('/sms/', {'From': view.MY_NUMBER, 'Body': 'invalid 17'})
@@ -60,10 +60,10 @@ class SmsRoutingTestCase(SmsViewsTestCase):
 
     def testCallsViewIfValidRoute(self):
         self.c.post('/sms/', {'From': view.MY_NUMBER, 'Body': 'valid 17'})
-        view.SMS_ROUTES['valid'].assert_called()
+        view.ROUTES['valid'].assert_called()
 
     def testCallsViewWithParsedParameters(self):
         request = self.request.post('/sms/', {'From': view.MY_NUMBER,
                                               'Body': 'valid 17'})
         view.index(request)
-        view.SMS_ROUTES['valid'].assert_called_with(request, '17')
+        view.ROUTES['valid'].assert_called_with('17')

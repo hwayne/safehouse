@@ -2,6 +2,7 @@ from django.test import TestCase
 import sms.routes as routes
 from sms.routes import ROUTES
 from unittest.mock import patch
+from panic.models import Contact
 routes.MY_NUMBER = "0"
 
 
@@ -15,6 +16,9 @@ class RoutesTestCase(TestCase):
 
     def testCallsInform(self):
         self.assertEqual(ROUTES['inform'], routes.inform)
+
+    def testCallsPanic(self):
+        self.assertEqual(ROUTES['panic'], routes.panic)
 
 
 class ReflectTestCase(TestCase):
@@ -37,7 +41,40 @@ class ReflectTestCase(TestCase):
 
 class InformTestCase(TestCase):
 
+    def setUp(self):
+        self.c = Contact.objects.create(phone_number="666",
+                                        informed=False)
+
     @patch('sms.routes.Contact.objects.inform_all')
     def testInformCallsInformAll(self, mock):
         routes.inform()
         mock.assert_called_with()
+
+    def testInformReturnsDict(self):
+        self.assertIsInstance(routes.inform(), dict)
+
+    def testInformKeyIsNumber(self):
+        self.assertIn(self.c.phone_number, routes.inform().keys())
+
+    @patch('sms.routes.get_templater')
+    def testInformGetsInformMessage(self, mock):
+        routes.inform()
+        mock.assert_called_with('inform')
+
+class PanicTestCase(TestCase):
+
+    @patch('sms.routes.Contact.objects.sample')
+    def testPanicCallsSampleWithDefaultCount(self, mock):
+        routes.panic()
+        mock.assert_called_with(routes.DEFAULT_MESSAGE_COUNT)
+
+    @patch('sms.routes.Contact.objects.sample')
+    def testPanicCallsSampleWithCount(self, mock):
+        routes.panic(10, 'lizard')
+        mock.assert_called_with(10)
+
+    @patch('sms.routes.get_templater')
+    def testPanicGetsPanicMessage(self, mock):
+        routes.panic()
+        mock.assert_called_with('panic')
+
