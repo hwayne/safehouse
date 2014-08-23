@@ -44,6 +44,9 @@ class Contact(models.Model):
         return self.first_name + " " + \
             self.last_name + ": " + self.phone_number
 
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
 
 class Incident(models.Model):
     incident_date = models.DateTimeField('Time of Incident')

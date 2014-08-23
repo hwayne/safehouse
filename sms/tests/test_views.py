@@ -1,9 +1,4 @@
-from os import environ
-
-environ['MY_NUMBER'] = '6655321'
-environ['TWILIO_NUMBER'] = '15005550006'
-environ['DJANGO_DEBUG'] = 'True'
-
+from sms.tests.config import *
 from unittest.mock import Mock, patch
 from django.test import TestCase, Client, RequestFactory
 import sms.views as view
@@ -16,6 +11,7 @@ class SmsViewsTestCase(TestCase):
         self.fake_num = '15005550006'
         self.request = RequestFactory()
         self.c = Client()
+        view.sendsms = Mock(return_value=view.HttpResponse("Test"))
 
 
 class SmsLoggingTestCase(SmsViewsTestCase):
@@ -36,15 +32,10 @@ class SmsLoggingTestCase(SmsViewsTestCase):
         self.c.post('/sms/', {'From': view.MY_NUMBER, 'Body': 'YESOCH 17'})
         self.assertEqual(Message.objects.get(pk=1).message, 'YESOCH 17')
 
-    @patch('sms.views.forward_message_to_me')
+    @patch('sms.views.ROUTES')
     def testTellUserIfNotFromUser(self, mock):
         self.c.post('/sms/', {'From': self.fake_num, 'Body': 'YESOCH 17'})
-        mock.assert_called_with(self.fake_num, 'YESOCH 17')
-
-    def testCreateMessageDictFromForwardingMessage(self):
-        response = view.forward_message_to_me(self.fake_num, 'message')
-        self.assertEqual(response[view.MY_NUMBER],
-                         '{}: message'.format(self.fake_num))
+        mock['forward'].assert_called_with(self.fake_num, 'YESOCH 17')
 
 
 class SmsRoutingTestCase(SmsViewsTestCase):
