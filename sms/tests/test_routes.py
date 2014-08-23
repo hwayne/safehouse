@@ -1,3 +1,4 @@
+from sms.tests.config import *
 from django.test import TestCase
 import sms.routes as routes
 from sms.routes import ROUTES
@@ -20,8 +21,11 @@ class RoutesTestCase(TestCase):
     def testCallsPanic(self):
         self.assertEqual(ROUTES['panic'], routes.panic)
 
-    def testCallssay(self):
+    def testCallsSay(self):
         self.assertEqual(ROUTES['say'], routes.say)
+
+    def testCallsForward(self):
+        self.assertEqual(ROUTES['forward'], routes.forward_message_to_me)
 
 
 class ReflectTestCase(TestCase):
@@ -98,3 +102,24 @@ class SayTestCase(TestCase):
         routes.say('YESOCH', 10)
         mock_sample.assert_called_with(10)
         mock_template.assert_called_with('yesoch')
+
+class ForwardTestCase(TestCase):
+
+    def setUp(self):
+        self.c = Contact.objects.create(phone_number="123",
+                                        first_name="A",
+                                        last_name="B",
+                                        informed=False)
+
+    def testGetsNameIfInDatabase(self):
+        response = routes.forward_message_to_me("123", "My name's YESOCH")
+        self.assertIn("A", response[routes.MY_NUMBER])
+        self.assertIn("B", response[routes.MY_NUMBER])
+
+    def testGetsNumberIfNotInDatabase(self):
+        response = routes.forward_message_to_me("1234", "My name's YESOCH")
+        self.assertIn("1234", response[routes.MY_NUMBER])
+
+    def testGetsMessage(self):
+        response = routes.forward_message_to_me("123", "My name's YESOCH")
+        self.assertIn("My name's YESOCH", response[routes.MY_NUMBER])

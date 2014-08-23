@@ -19,21 +19,13 @@ def index(request):
     if from_number == MY_NUMBER:
         response = route_function(*route['args'])
     else:
-        response = forward_message_to_me(from_number, message)
-
+        response = ROUTES['forward'](from_number, message)
     if isinstance(response, dict):
         return sendsms(request, response)
     return HttpResponse("Complete.")
 
 
-def forward_message_to_me(number, message):  # TODO Make this a route.
-    return {MY_NUMBER: "{}: {}".format(number, message)}
-
-
 def sendsms(request, message_dict):  # Reason it needs a response?
-    if DEBUG:
-        # pass # For local testing- disable to prevent twilios
-        return HttpResponse('Debug')
     for number, message in message_dict.items():
         twilio_client.messages.create(
             body=message,

@@ -1,3 +1,4 @@
+from sms.tests.config import *
 from django.test import TestCase
 import sms.utils as util
 

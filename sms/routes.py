@@ -42,8 +42,18 @@ def reflect(*args):
     """ Returns all arguments back to me as a string. Is the default. """
     return {MY_NUMBER: " ".join(args)}
 
+
+def forward_message_to_me(number, message):
+    try:
+        sender = Contact.objects.get(phone_number=number).full_name()
+    except:
+        sender = number
+    return {MY_NUMBER: "{}: {}".format(sender, message)}
+
+
 ROUTES = defaultdict(lambda: reflect)
 ROUTES.update({"inform": inform,
                "panic": panic,
                "say": say,
+               "forward": forward_message_to_me,
                })
