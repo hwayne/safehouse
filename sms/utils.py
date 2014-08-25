@@ -34,7 +34,7 @@ def get_templater(template_name='inform'):
     try:
         template = loader.get_template(template_url)
     except TemplateDoesNotExist:
-        template = Template.objects.get_as_template(name=template_name)
+        template = Template.objects.get(name=template_name).as_template()
 
 
     def context_maker(contact):
