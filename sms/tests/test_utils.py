@@ -28,3 +28,21 @@ class SmsParserTestCase(TestCase):
     def testSmsGetsArguments(self):
         output = util.parse_message("YESOCH knows all")
         self.assertEqual(output['args'], ['knows', 'all'])
+
+
+from sms.models import Template
+from panic.models import Contact
+class GetTemplaterTestCase(TestCase):
+
+    def setUp(self):
+        self.contact = Contact.objects.create(first_name="a")
+
+    def testDefaultsToDjangoTemplates(self):
+        t2 = Template.objects.create(name="panic", text="test")
+        template = util.get_templater("panic")(self.contact)
+        self.assertNotIn("test", template)
+
+    def testThenTriesModelTemplates(self):
+        t2 = Template.objects.create(name="test", text="a test")
+        template = util.get_templater("test")(self.contact)
+        self.assertIn("a test", template)
