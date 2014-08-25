@@ -1,12 +1,15 @@
 # from django.shortcuts import render
 from django.http import HttpResponse
+from django.views import generic
 from sms.env import MY_NUMBER, TWILIO_NUMBER, DEBUG
 from sms.routes import ROUTES
 from django_twilio.decorators import twilio_view
 from django_twilio.client import twilio_client
 from sms.utils import parse_message, clean_number
-from sms.models import log_message
+from sms.models import log_message, Template
 
+class TemplateView(generic.ListView):
+    model = Template
 
 @twilio_view
 def index(request):

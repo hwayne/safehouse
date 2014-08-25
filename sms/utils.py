@@ -1,8 +1,9 @@
 import shlex
 from re import sub
+from sms.models import Message, Template
 from sms.env import MY_NAME, MY_NUMBER
-from sms.models import Message
 from django.template import Context, loader
+from django.template.base import TemplateDoesNotExist
 
 
 
@@ -19,11 +20,22 @@ def parse_message(message):
     return {'route': route, 'args': token_list}
 
 
-def get_templater(template_url='inform'):
-    if 'html' not in template_url:  # Legacy
-        template_url = "sms/{}.html".format(template_url)
+def get_templater(template_name='inform'):
+    """ Get a template renderer for the route dicts.
 
-    template = loader.get_template(template_url)
+        Will first look for core templates (in template folder), then
+        will look for extension templates (in the Template model).
+
+        Returns a function that, given a contact, renders the template. """
+    template_url = template_name
+    if 'html' not in template_url:  # Legacy
+        template_url = "sms/{}.html".format(template_name)
+
+    try:
+        template = loader.get_template(template_url)
+    except TemplateDoesNotExist:
+        template = Template.objects.get_as_template(name=template_name)
+
 
     def context_maker(contact):
         return Context({'name': contact.first_name,

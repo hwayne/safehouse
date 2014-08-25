@@ -20,6 +20,7 @@ To Use
   * Text the Safehouse number "inform" to let everyone know that they're part of your crazy anti-psychosis project. This will only text people who haven't been informed yet.
   * Text the Safehouse number "panic N" to let N random friends know you need help.
   * Text the Safehouse number "say `template` N" to send N friends the `template`. Just "say" will call the template `talk` for three people.
+    * You can add additional templates through the admin page for sms templates.
 
 Future Changes
 ----
@@ -28,5 +29,4 @@ Future Changes
 * Ability to control the server with texts.
 * Ability to log messages directly as opposed to hacking it with "reflect".
 * Delayed messages would be pretty cool, I think.
-  * As would generic templating.
 * Email functionality.
