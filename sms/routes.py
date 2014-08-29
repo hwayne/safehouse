@@ -56,9 +56,19 @@ def process_outside_message(*args):
     Otherwise, forward. """
     try:
         save_tagged_message(Config.objects.get(key='tag').val, *args)
-        return {MY_NUMBER: "Saved tagged message."}
     except Config.DoesNotExist:
         return forward_message_to_me(*args)
+    else:
+        return None
+
+
+def pop_tag(tag):
+    """ Given a tag, returns the oldest message with that tag.
+
+    Note: the message is deleted by this. Not side effect free."""
+    message = pop_message_tag(tag)
+    return forward_message_to_me(message.phone_number, message.message)
+
 
 
 def forward_message_to_me(number, message):
@@ -75,5 +85,6 @@ ROUTES.update({"inform": inform,
                "say": say,
                "outside": process_outside_message,
                "set": config,
-               "unset": partial(config, val=None)
+               "unset": partial(config, val=None),
+               "listen": pop_tag,
                })

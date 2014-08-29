@@ -146,3 +146,11 @@ class ForwardTestCase(TestCase):
         self.assertIn("My name's YESOCH", response[routes.MY_NUMBER])
 
 
+class PopTagTestCase(TestCase):
+
+    @patch('sms.routes.forward_message_to_me')
+    def testGetsMessage(self, mock):
+       routes.config('tag', 'abc')
+       routes.process_outside_message('1234', 'this is tagged')
+       output = routes.pop_tag('abc')
+       mock.assert_called_with('1234', 'this is tagged')

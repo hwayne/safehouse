@@ -21,7 +21,7 @@ def index(request):
 
     route = parse_message(message)
     route_function = ROUTES[route['route']]
-    if from_number != MY_NUMBER:
+    if from_number == MY_NUMBER:
         response = route_function(*route['args'])
     else:
         response = ROUTES['outside'](from_number, message)

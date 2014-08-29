@@ -32,7 +32,11 @@ def save_tagged_message(tag, phone_number, message):
 
 
 def pop_message_tag(tag):
-    pass
+    message = SavedMessage.objects.filter(tag=tag).first()
+    if message:
+        message.delete()
+    return message
+
 
 
 class Config(models.Model):
@@ -44,7 +48,9 @@ class Config(models.Model):
         return "{}: {}".format(self.key, self.val)
 
 def config(key, val):
-    """ Sets and unsets server variables """
+    """ Sets and unsets server variables
+
+    Takes in key, val. If val is Falsey, delete key if it exists."""
     if not val:
         [c.delete() for c in Config.objects.filter(key=key) ]
         return
@@ -53,7 +59,7 @@ def config(key, val):
         config.val = val
         config.save()
     except Config.DoesNotExist:
-        config = Config(key=key, val=val).save()
+        Config(key=key, val=val).save()
 
 class Template(models.Model):
     name = models.CharField(max_length=16, unique=True)
