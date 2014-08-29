@@ -5,9 +5,15 @@ The rest of SMS should see is the ROUTES map."""
 
 from panic.models import Contact  # COUPLING
 from sms.utils import MY_NUMBER, get_templater
+from sms.models import save_tagged_message, pop_message_tag, config, Config
 from collections import defaultdict
+from functools import partial
 
 DEFAULT_MESSAGE_COUNT = 3
+
+
+def sms_cache(key):
+    return 'sms-'+key
 
 
 def build_message_dict(contacts, template):
@@ -43,6 +49,18 @@ def reflect(*args):
     return {MY_NUMBER: " ".join(args)}
 
 
+def process_outside_message(*args):
+    """ Determines whether an outsider message is stored or forwarded.
+
+    It is stored if the user set the 'tag' cache using config.
+    Otherwise, forward. """
+    try:
+        save_tagged_message(Config.objects.get(key='tag').val, *args)
+        return {MY_NUMBER: "Saved tagged message."}
+    except Config.DoesNotExist:
+        return forward_message_to_me(*args)
+
+
 def forward_message_to_me(number, message):
     try:
         sender = Contact.objects.get(phone_number=number).full_name()
@@ -55,5 +73,7 @@ ROUTES = defaultdict(lambda: reflect)
 ROUTES.update({"inform": inform,
                "panic": panic,
                "say": say,
-               "forward": forward_message_to_me,
+               "outside": process_outside_message,
+               "set": config,
+               "unset": partial(config, val=None)
                })

@@ -6,7 +6,6 @@ from django.template import Context, loader
 from django.template.base import TemplateDoesNotExist
 
 
-
 def clean_number(number):
     return sub("\D", "", number)
 
@@ -35,7 +34,6 @@ def get_templater(template_name='inform'):
         template = loader.get_template(template_url)
     except TemplateDoesNotExist:
         template = Template.objects.get(name=template_name).as_template()
-
 
     def context_maker(contact):
         return Context({'name': contact.first_name,

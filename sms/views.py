@@ -1,15 +1,17 @@
 # from django.shortcuts import render
+from sms.utils import parse_message, clean_number
 from django.http import HttpResponse
 from django.views import generic
-from sms.env import MY_NUMBER, TWILIO_NUMBER, DEBUG
+from sms.models import log_message, Template
 from sms.routes import ROUTES
 from django_twilio.decorators import twilio_view
+from sms.env import MY_NUMBER, TWILIO_NUMBER
 from django_twilio.client import twilio_client
-from sms.utils import parse_message, clean_number
-from sms.models import log_message, Template
+
 
 class TemplateView(generic.ListView):
     model = Template
+
 
 @twilio_view
 def index(request):
@@ -19,10 +21,10 @@ def index(request):
 
     route = parse_message(message)
     route_function = ROUTES[route['route']]
-    if from_number == MY_NUMBER:
+    if from_number != MY_NUMBER:
         response = route_function(*route['args'])
     else:
-        response = ROUTES['forward'](from_number, message)
+        response = ROUTES['outside'](from_number, message)
     if isinstance(response, dict):
         return sendsms(request, response)
     return HttpResponse("Complete.")

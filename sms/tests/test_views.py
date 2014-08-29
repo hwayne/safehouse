@@ -35,7 +35,7 @@ class SmsLoggingTestCase(SmsViewsTestCase):
     @patch('sms.views.ROUTES')
     def testTellUserIfNotFromUser(self, mock):
         self.c.post('/sms/', {'From': self.fake_num, 'Body': 'YESOCH 17'})
-        mock['forward'].assert_called_with(self.fake_num, 'YESOCH 17')
+        mock['outside'].assert_called_with(self.fake_num, 'YESOCH 17')
 
 
 class SmsRoutingTestCase(SmsViewsTestCase):
