@@ -26,7 +26,6 @@ Future Changes
 ----
 
 * Upgrade to django 1.7 as soon as it's on pypi. That'll fix the Python3/South/Django-Twilio death triangle.
-* Ability to control the server with texts.
 * Ability to log messages directly as opposed to hacking it with "reflect".
-* Delayed messages would be pretty cool, I think.
+* Delayed messages would be pretty cool, I think. (Sort of implemented with saved message tags... ish.)
 * Email functionality.
