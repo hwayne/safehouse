@@ -27,10 +27,13 @@ def inform(*args):
 
 
 def panic(count=DEFAULT_MESSAGE_COUNT):
-    """ say people I'm not okay.
+    """ Tell people I'm not okay.
 
-        Takes a count."""
+        Differs from say panic in that this is a hard panic, ie if the safehouse
+        is in 'save messages' mode it will cancel that to ensure people can
+        reach you. """
 
+    config('tag', None)
     contacts_to_panic = Contact.objects.sample(count)
     return build_message_dict(contacts_to_panic, get_templater('panic'))
 

@@ -93,6 +93,13 @@ class PanicTestCase(TestCase):
         mock.assert_called_with('panic')
 
 
+    @patch('sms.routes.forward_message_to_me')
+    def testPanicBypassesMessageSaving(self, mock):
+       routes.config('tag', 'abc')
+       routes.panic()
+       routes.process_outside_message('1234', 'this is tagged')
+       mock.assert_called_with('1234', 'this is tagged')
+
 class SayTestCase(TestCase):
 
     @patch('sms.routes.get_templater')
