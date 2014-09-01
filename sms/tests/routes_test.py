@@ -92,13 +92,13 @@ class PanicTestCase(TestCase):
         routes.panic()
         mock.assert_called_with('panic')
 
-
     @patch('sms.routes.forward_message_to_me')
     def testPanicBypassesMessageSaving(self, mock):
-       routes.config('tag', 'abc')
-       routes.panic()
-       routes.process_outside_message('1234', 'this is tagged')
-       mock.assert_called_with('1234', 'this is tagged')
+        routes.config('tag', 'abc')
+        routes.panic()
+        routes.process_outside_message('1234', 'this is tagged')
+        mock.assert_called_with('1234', 'this is tagged')
+
 
 class SayTestCase(TestCase):
 
@@ -124,7 +124,7 @@ class OutsideMessageTestCase(TestCase):
         routes.process_outside_message("123", "Hail YESOCH")
         mock.assert_called_with("123", "Hail YESOCH")
 
-    @patch('sms.routes.save_tagged_message')
+    @patch('sms.models.save_tagged_message')
     def testCallsStoreIfTagCache(self, mock):
         routes.config('tag', 'elephant')
         routes.process_outside_message("123", "Hail YESOCH")
@@ -157,7 +157,7 @@ class PopTagTestCase(TestCase):
 
     @patch('sms.routes.forward_message_to_me')
     def testGetsMessage(self, mock):
-       routes.config('tag', 'abc')
-       routes.process_outside_message('1234', 'this is tagged')
-       output = routes.pop_tag('abc')
-       mock.assert_called_with('1234', 'this is tagged')
+        routes.config('tag', 'abc')
+        routes.process_outside_message('1234', 'this is tagged')
+        output = routes.pop_tag('abc')
+        mock.assert_called_with('1234', 'this is tagged')

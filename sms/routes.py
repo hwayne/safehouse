@@ -5,7 +5,7 @@ The rest of SMS should see is the ROUTES map."""
 
 from panic.models import Contact  # COUPLING
 from sms.utils import MY_NUMBER, get_templater
-from sms.models import save_tagged_message, pop_message_tag, config, Config
+import sms.models as model
 from collections import defaultdict
 from functools import partial
 
@@ -33,7 +33,7 @@ def panic(count=DEFAULT_MESSAGE_COUNT):
         is in 'save messages' mode it will cancel that to ensure people can
         reach you. """
 
-    config('tag', None)
+    model.config('tag', None)
     contacts_to_panic = Contact.objects.sample(count)
     return build_message_dict(contacts_to_panic, get_templater('panic'))
 
@@ -58,8 +58,9 @@ def process_outside_message(*args):
     It is stored if the user set the 'tag' cache using config.
     Otherwise, forward. """
     try:
-        save_tagged_message(Config.objects.get(key='tag').val, *args)
-    except Config.DoesNotExist:
+        model.save_tagged_message(model.Config.objects.get(key='tag').val,
+                                  *args)
+    except model.Config.DoesNotExist:
         return forward_message_to_me(*args)
     else:
         return None
@@ -69,9 +70,8 @@ def pop_tag(tag):
     """ Given a tag, returns the oldest message with that tag.
 
     Note: the message is deleted by this. Not side effect free."""
-    message = pop_message_tag(tag)
+    message = model.pop_message_tag(tag)
     return forward_message_to_me(message.phone_number, message.message)
-
 
 
 def forward_message_to_me(number, message):
@@ -80,6 +80,13 @@ def forward_message_to_me(number, message):
     except:
         sender = number
     return {MY_NUMBER: "{}: {}".format(sender, message)}
+
+
+def config(key, val):
+    """ Wrapper around the config call in sms.models.
+
+    ROUTES shouldn't have any direct connections to the model."""
+    model.config(key, val)
 
 
 ROUTES = defaultdict(lambda: reflect)
