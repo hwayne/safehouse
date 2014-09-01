@@ -37,6 +37,9 @@ class SmsLoggingTestCase(SmsViewsTestCase):
         self.c.post('/sms/', {'From': self.fake_num, 'Body': 'YESOCH 17'})
         mock['outside'].assert_called_with(self.fake_num, 'YESOCH 17')
 
+    def testDontExplodeIfOutsiderHasApostrophe(self):
+        self.c.post('/sms/', {'From': self.fake_num, 'Body': "We're doomed"})
+
 
 class SmsRoutingTestCase(SmsViewsTestCase):
 

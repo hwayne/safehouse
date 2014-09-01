@@ -19,9 +19,9 @@ def index(request):
     message = request.POST.get('Body', '')
     log_message(from_number, message)  # for posterity!
 
-    route = parse_message(message)
-    route_function = ROUTES[route['route']]
     if from_number == MY_NUMBER:
+        route = parse_message(message)
+        route_function = ROUTES[route['route']]
         response = route_function(*route['args'])
     else:
         response = ROUTES['outside'](from_number, message)
