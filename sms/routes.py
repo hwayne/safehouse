@@ -89,6 +89,13 @@ def config(key, val):
     model.config(key, val)
 
 
+def make_template(name, text):
+    """ Saves a new template to the model.
+
+    For on-the-fly saying. """
+    model.Template.objects.create(name=name, text=text)
+
+
 ROUTES = defaultdict(lambda: reflect)
 ROUTES.update({"inform": inform,
                "panic": panic,
@@ -97,4 +104,6 @@ ROUTES.update({"inform": inform,
                "set": config,
                "unset": partial(config, val=None),
                "listen": pop_tag,
+               "save_sms_template": make_template,
+               "save-sms-template": make_template,
                })

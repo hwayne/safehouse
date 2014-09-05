@@ -161,3 +161,21 @@ class PopTagTestCase(TestCase):
         routes.process_outside_message('1234', 'this is tagged')
         output = routes.pop_tag('abc')
         mock.assert_called_with('1234', 'this is tagged')
+
+
+class NewTemplateTestCase(TestCase):
+
+    def testSavesTemplate(self):
+        routes.make_template("a", "b")
+        t = routes.model.Template.objects.get(pk=1)
+
+    def testSavesTemplateWithName(self):
+        routes.make_template("name", "b")
+        t = routes.model.Template.objects.get(pk=1)
+        self.assertEqual(t.name, 'name')
+
+    def testSavesTemplateWithText(self):
+        routes.make_template("a", "text")
+        t = routes.model.Template.objects.get(pk=1)
+        self.assertEqual(t.text, 'text')
+
