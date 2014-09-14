@@ -3,7 +3,7 @@ from sms.utils import parse_message, clean_number
 from django.http import HttpResponse
 from django.views import generic
 from sms.models import log_message, Template
-from sms.routes import ROUTES
+from sms.routes.routes import ROUTES
 from django_twilio.decorators import twilio_view
 from sms.env import MY_NUMBER, TWILIO_NUMBER
 from django_twilio.client import twilio_client
