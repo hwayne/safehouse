@@ -1,59 +1,20 @@
 from sms.tests.config import *
 from django.test import TestCase
-import sms.routes as routes
-from sms.routes import ROUTES
 from unittest.mock import patch
+import sms.routes.contact as routes
 from panic.models import Contact
 
-
-class RoutesTestCase(TestCase):
-
-    def testDefaultsToReflect(self):
-        self.assertEqual(ROUTES['asdf'], routes.reflect)
-
-    def testReflectCallsReflect(self):
-        self.assertEqual(ROUTES['reflect'], routes.reflect)
-
-    def testInformCallsInform(self):
-        self.assertEqual(ROUTES['inform'], routes.inform)
-
-    def testPanicCallsPanic(self):
-        self.assertEqual(ROUTES['panic'], routes.panic)
-
-    def testSayCallsSay(self):
-        self.assertEqual(ROUTES['say'], routes.say)
-
-    def testSetCallsConfig(self):
-        self.assertEqual(ROUTES['set'], routes.config)
-
-    @patch('sms.routes.config')
-    def testUnsetCallsConfig(self, mock):
-        return  # skip for now
-        ROUTES['unset']("key")
-        mock.assert_called_with("key", None)
-
-
-class ReflectTestCase(TestCase):
-
-    def testReflectTakesEmptyString(self):
-        routes.reflect()  # don't break!
-
-    def testReflectReturnsOneArgument(self):
-        output = routes.reflect("asd")
-        self.assertEqual("asd", output)
-
-    def testReflectReturnsMultipleArguments(self):
-        output = routes.reflect("asd", "fgh")
-        self.assertEqual("asd fgh", output)
-
-
+SAMPLE =  'sms.routes.contact.Contact.objects.sample'
+INFORM_ALL = 'sms.routes.contact.Contact.objects.inform_all'
+GET_TEMPLATER = 'sms.routes.contact.get_templater'
+FORWARD_TO_ME = 'sms.routes.contact.forward_message_to_me'
 class InformTestCase(TestCase):
 
     def setUp(self):
         self.c = Contact.objects.create(phone_number="666",
                                         informed=False)
 
-    @patch('sms.routes.Contact.objects.inform_all')
+    @patch(INFORM_ALL)
     def testInformCallsInformAll(self, mock):
         routes.inform()
         mock.assert_called_with()
@@ -64,7 +25,7 @@ class InformTestCase(TestCase):
     def testInformKeyIsNumber(self):
         self.assertIn(self.c.phone_number, routes.inform().keys())
 
-    @patch('sms.routes.get_templater')
+    @patch(GET_TEMPLATER)
     def testInformGetsInformMessage(self, mock):
         routes.inform()
         mock.assert_called_with('inform')
@@ -72,22 +33,22 @@ class InformTestCase(TestCase):
 
 class PanicTestCase(TestCase):
 
-    @patch('sms.routes.Contact.objects.sample')
+    @patch(SAMPLE)
     def testPanicCallsSampleWithDefaultCount(self, mock):
         routes.panic()
         mock.assert_called_with(routes.DEFAULT_MESSAGE_COUNT)
 
-    @patch('sms.routes.Contact.objects.sample')
+    @patch(SAMPLE)
     def testPanicCallsSampleWithCount(self, mock):
         routes.panic(10)
         mock.assert_called_with(10)
 
-    @patch('sms.routes.get_templater')
+    @patch(GET_TEMPLATER)
     def testPanicGetsPanicMessage(self, mock):
         routes.panic()
         mock.assert_called_with('panic')
 
-    @patch('sms.routes.forward_message_to_me')
+    @patch(FORWARD_TO_ME)
     def testPanicBypassesMessageSaving(self, mock):
         routes.config('tag', 'abc')
         routes.panic()
@@ -97,15 +58,15 @@ class PanicTestCase(TestCase):
 
 class SayTestCase(TestCase):
 
-    @patch('sms.routes.get_templater')
-    @patch('sms.routes.Contact.objects.sample')
+    @patch(GET_TEMPLATER)
+    @patch(SAMPLE)
     def testSayHasDefaultParams(self, mock_sample, mock_template):
         routes.say()
         mock_sample.assert_called_with(routes.DEFAULT_MESSAGE_COUNT)
         mock_template.assert_called_with('talk')
 
-    @patch('sms.routes.get_templater')
-    @patch('sms.routes.Contact.objects.sample')
+    @patch(GET_TEMPLATER)
+    @patch(SAMPLE)
     def testSayHasCallableParams(self, mock_sample, mock_template):
         routes.say('YESOCH', 10)
         mock_sample.assert_called_with(10)
@@ -114,7 +75,7 @@ class SayTestCase(TestCase):
 
 class OutsideMessageTestCase(TestCase):
 
-    @patch('sms.routes.forward_message_to_me')
+    @patch(FORWARD_TO_ME)
     def testCallsForwardIfNoTagCache(self, mock):
         routes.process_outside_message("123", "Hail YESOCH")
         mock.assert_called_with("123", "Hail YESOCH")
@@ -148,29 +109,13 @@ class ForwardTestCase(TestCase):
         self.assertIn("My name's YESOCH", response)
 
 
-class PopTagTestCase(TestCase):
+class ListenTestCase(TestCase):
 
-    @patch('sms.routes.forward_message_to_me')
+    @patch(FORWARD_TO_ME)
     def testGetsMessage(self, mock):
         routes.config('tag', 'abc')
         routes.process_outside_message('1234', 'this is tagged')
-        output = routes.pop_tag('abc')
+        output = routes.listen('abc')
         mock.assert_called_with('1234', 'this is tagged')
 
-
-class NewTemplateTestCase(TestCase):
-
-    def testSavesTemplate(self):
-        routes.make_template("a", "b")
-        t = routes.model.Template.objects.get(pk=1)
-
-    def testSavesTemplateWithName(self):
-        routes.make_template("name", "b")
-        t = routes.model.Template.objects.get(pk=1)
-        self.assertEqual(t.name, 'name')
-
-    def testSavesTemplateWithText(self):
-        routes.make_template("a", "text")
-        t = routes.model.Template.objects.get(pk=1)
-        self.assertEqual(t.text, 'text')
 
