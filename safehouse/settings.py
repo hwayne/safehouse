@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django_nose',
     'south',
     'panic',
+    'reminder',
     'sms',
 )
 
