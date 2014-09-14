@@ -1,20 +1,14 @@
-"""A route is a function that returns a dict consisting of
-{number: message} key/values. I figured it'd be nice to keep them separate from
-models, which seem strictly tied to database tables in django. The only thing
-The rest of SMS should see is the ROUTES map."""
+""" routes_contacts deals with any routes that involve sending or receiving
+    messages from other people. It depends on having the 'contact'
+    ('panic' in older versions) app installed.
+    Has a dependency on routes.sms, which is okay because, well, you'll
+    always have the sms app enabled if you're using it, right? """
 
 from panic.models import Contact  # COUPLING
-from sms.utils import MY_NUMBER, get_templater
-import sms.models as model
-from collections import defaultdict
-from functools import partial
+from sms.utils import get_templater
+from sms.routes.sms import config, model, pop_tag
 
 DEFAULT_MESSAGE_COUNT = 3
-
-
-def sms_cache(key):
-    return 'sms-'+key
-
 
 def build_message_dict(contacts, template):
     return {c.phone_number: template(c) for c in contacts}
@@ -47,11 +41,6 @@ def say(template="talk", count=DEFAULT_MESSAGE_COUNT):
     return build_message_dict(contacts_to_say, get_templater(template.lower()))
 
 
-def reflect(*args):
-    """ Returns all arguments back to me as a string. Is the default. """
-    return {MY_NUMBER: " ".join(args)}
-
-
 def process_outside_message(*args):
     """ Determines whether an outsider message is stored or forwarded.
 
@@ -66,44 +55,27 @@ def process_outside_message(*args):
         return None
 
 
-def pop_tag(tag):
-    """ Given a tag, returns the oldest message with that tag.
-
-    Note: the message is deleted by this. Not side effect free."""
-    message = model.pop_message_tag(tag)
-    return forward_message_to_me(message.phone_number, message.message)
-
-
 def forward_message_to_me(number, message):
     try:
         sender = Contact.objects.get(phone_number=number).full_name()
     except:
         sender = number
-    return {MY_NUMBER: "{}: {}".format(sender, message)}
+    return "{}: {}".format(sender, message)
 
 
-def config(key, val):
-    """ Wrapper around the config call in sms.models.
+def listen(tag):
+    """ Given a tag, pop it and send it to you.
 
-    ROUTES shouldn't have any direct connections to the model."""
-    model.config(key, val)
+        In contact because it's expected these are stored people messages."""
 
-
-def make_template(name, text):
-    """ Saves a new template to the model.
-
-    For on-the-fly saying. """
-    model.Template.objects.create(name=name, text=text)
+    message = pop_tag(tag)
+    return forward_message_to_me(message.phone_number, message.message)
 
 
-ROUTES = defaultdict(lambda: reflect)
-ROUTES.update({"inform": inform,
-               "panic": panic,
-               "say": say,
-               "outside": process_outside_message,
-               "set": config,
-               "unset": partial(config, val=None),
-               "listen": pop_tag,
-               "save_sms_template": make_template,
-               "save-sms-template": make_template,
-               })
+contact_routes = {"inform": inform,
+                  "panic": panic,
+                  "listen": listen, # Overwrites sms listen
+                  "say": say,
+                  "outside": process_outside_message,
+                  }
+

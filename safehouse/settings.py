@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_twilio',
     'django_nose',
-    'south',
+    'journal',
     'panic',
     'reminder',
     'sms',
