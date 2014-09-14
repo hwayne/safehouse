@@ -28,6 +28,8 @@ class Reminder(models.Model):
     reminder_interval = models.IntegerField()
     reminders_left = models.IntegerField()
     created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
 
     def __str__(self):
         return reminder_text
