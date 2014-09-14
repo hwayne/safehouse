@@ -4,7 +4,6 @@ import sms.routes as routes
 from sms.routes import ROUTES
 from unittest.mock import patch
 from panic.models import Contact
-routes.MY_NUMBER = "0"
 
 
 class RoutesTestCase(TestCase):
@@ -39,16 +38,12 @@ class ReflectTestCase(TestCase):
     def testReflectTakesEmptyString(self):
         routes.reflect()  # don't break!
 
-    def testReflectReturnsMyNumber(self):
-        output = routes.reflect("asdasd")
-        self.assertIn(routes.MY_NUMBER, output)
-
     def testReflectReturnsOneArgument(self):
-        output = routes.reflect("asd")[routes.MY_NUMBER]
+        output = routes.reflect("asd")
         self.assertEqual("asd", output)
 
     def testReflectReturnsMultipleArguments(self):
-        output = routes.reflect("asd", "fgh")[routes.MY_NUMBER]
+        output = routes.reflect("asd", "fgh")
         self.assertEqual("asd fgh", output)
 
 
@@ -141,16 +136,16 @@ class ForwardTestCase(TestCase):
 
     def testGetsNameIfInDatabase(self):
         response = routes.forward_message_to_me("123", "My name's YESOCH")
-        self.assertIn("A", response[routes.MY_NUMBER])
-        self.assertIn("B", response[routes.MY_NUMBER])
+        self.assertIn("A", response)
+        self.assertIn("B", response)
 
     def testGetsNumberIfNotInDatabase(self):
         response = routes.forward_message_to_me("1234", "My name's YESOCH")
-        self.assertIn("1234", response[routes.MY_NUMBER])
+        self.assertIn("1234", response)
 
     def testGetsMessage(self):
         response = routes.forward_message_to_me("123", "My name's YESOCH")
-        self.assertIn("My name's YESOCH", response[routes.MY_NUMBER])
+        self.assertIn("My name's YESOCH", response)
 
 
 class PopTagTestCase(TestCase):

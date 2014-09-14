@@ -4,7 +4,7 @@ models, which seem strictly tied to database tables in django. The only thing
 The rest of SMS should see is the ROUTES map."""
 
 from panic.models import Contact  # COUPLING
-from sms.utils import MY_NUMBER, get_templater
+from sms.utils import get_templater
 import sms.models as model
 from collections import defaultdict
 from functools import partial
@@ -49,7 +49,7 @@ def say(template="talk", count=DEFAULT_MESSAGE_COUNT):
 
 def reflect(*args):
     """ Returns all arguments back to me as a string. Is the default. """
-    return {MY_NUMBER: " ".join(args)}
+    return " ".join(args)
 
 
 def process_outside_message(*args):
@@ -79,7 +79,7 @@ def forward_message_to_me(number, message):
         sender = Contact.objects.get(phone_number=number).full_name()
     except:
         sender = number
-    return {MY_NUMBER: "{}: {}".format(sender, message)}
+    return "{}: {}".format(sender, message)
 
 
 def config(key, val):

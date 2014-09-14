@@ -25,13 +25,15 @@ def index(request):
         response = route_function(*route['args'])
     else:
         response = ROUTES['outside'](from_number, message)
-    if isinstance(response, dict):
-        return sendsms(request, response)
+    if isinstance(response, dict) or isinstance(response, str):
+        return sendsms(response)
     return HttpResponse("Complete.")
 
 
-def sendsms(request, message_dict):  # Reason it needs a response?
-    for number, message in message_dict.items():
+def sendsms(messages):
+    if isinstance(messages, str):
+        messages = { MY_NUMBER: messages }
+    for number, message in messages.items():
         twilio_client.messages.create(
             body=message,
             to=number,
