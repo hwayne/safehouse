@@ -23,9 +23,9 @@ def inform(*args):
 def panic(count=DEFAULT_MESSAGE_COUNT):
     """ Tell people I'm not okay.
 
-        Differs from say panic in that this is a hard panic, ie if the safehouse
-        is in 'save messages' mode it will cancel that to ensure people can
-        reach you. """
+    Differs from say panic in that this is a hard panic, ie if the safehouse
+    is in 'save messages' mode it will cancel that to ensure people can
+    reach you. """
 
     model.config('tag', None)
     contacts_to_panic = Contact.objects.sample(count)
@@ -35,7 +35,7 @@ def panic(count=DEFAULT_MESSAGE_COUNT):
 def say(template="talk", count=DEFAULT_MESSAGE_COUNT):
     """ Arbitrary template finder and messager.
 
-        Takes a template name, count, outputs dict. """
+    Takes a template name, count, outputs dict. """
 
     contacts_to_say = Contact.objects.sample(count)
     return build_message_dict(contacts_to_say, get_templater(template.lower()))
@@ -66,7 +66,7 @@ def forward_message_to_me(number, message):
 def listen(tag):
     """ Given a tag, pop it and send it to you.
 
-        In contact because it's expected these are stored people messages."""
+    In contact because it's expected these are stored people messages."""
 
     message = pop_tag(tag)
     return forward_message_to_me(message.phone_number, message.message)

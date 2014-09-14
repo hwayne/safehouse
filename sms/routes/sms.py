@@ -1,5 +1,5 @@
 """ routes_base deals with any commands that affect the server or how the sms
-    app functions. It does not depend on haing other apps installed. """
+app functions. It does not depend on having other apps installed. """
 
 from functools import partial
 import sms.models as model
@@ -17,10 +17,6 @@ def pop_tag(tag):
     Note: the message is deleted by this. Not side effect free."""
     message = model.pop_message_tag(tag)
     return message #forward_message_to_me(message.phone_number, message.message)
-
-def reflect(*args):
-    """ Returns all arguments back to me as a string. Is the default. """
-    return " ".join(args)
 
 
 def make_template(name, text):

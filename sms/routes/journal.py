@@ -24,8 +24,8 @@ def write_entry(name, number=None, *comments):
 def read_entry(name, from_latest=1):
     """ Reads the entry with {name}, {from_latest} most recent.
 
-        from_latest is the human latest, not computer latest.
-        ie 1 is most recent, 2 is second most recent, etc. """
+    from_latest is the human latest, not computer latest.
+    ie 1 is most recent, 2 is second most recent, etc. """
 
     entry_list = Entry.objects.filter(name=name).order_by('-created_at')
     try:
