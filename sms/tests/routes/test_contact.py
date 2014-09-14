@@ -4,10 +4,12 @@ from unittest.mock import patch
 import sms.routes.contact as routes
 from panic.models import Contact
 
-SAMPLE =  'sms.routes.contact.Contact.objects.sample'
+SAMPLE = 'sms.routes.contact.Contact.objects.sample'
 INFORM_ALL = 'sms.routes.contact.Contact.objects.inform_all'
 GET_TEMPLATER = 'sms.routes.contact.get_templater'
 FORWARD_TO_ME = 'sms.routes.contact.forward_message_to_me'
+
+
 class InformTestCase(TestCase):
 
     def setUp(self):
@@ -117,5 +119,3 @@ class ListenTestCase(TestCase):
         routes.process_outside_message('1234', 'this is tagged')
         output = routes.listen('abc')
         mock.assert_called_with('1234', 'this is tagged')
-
-

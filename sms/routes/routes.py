@@ -12,8 +12,10 @@
     """
 from sms.routes.sms import sms_routes, reflect
 from sms.routes.contact import contact_routes
+from sms.routes.journal import journal_routes
 from collections import defaultdict
 
 ROUTES = defaultdict(lambda: reflect)
 ROUTES.update(sms_routes)
 ROUTES.update(contact_routes)
+ROUTES.update(journal_routes)
