@@ -12,7 +12,7 @@ class NotifierManager(models.Manager):
         WILL reset the notification interval. Either consider it 'pinged'
         and act on it or use objects.filter.update to update it."""
         return (m for m in self.all() if m.can_notify()
-                and (now() - m.updated_at).days >= m.notify_interval)
+                and (now() - m.updated_at).days >= min(m.notify_interval,1))
 
 
 class Notifier(models.Model):

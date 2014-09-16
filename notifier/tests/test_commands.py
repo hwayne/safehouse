@@ -1,7 +1,7 @@
 from sms.tests.config import *
 from django.test import TestCase
 from notifier.models import Notifier, NotifierNumber
-from notifier.management.commands.send_notifications import Command
+from notifier.management.commands.notify import Command
 
 
 class SendCommandTestCase(TestCase):
