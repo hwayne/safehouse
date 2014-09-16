@@ -5,7 +5,7 @@ Safehouse is a __headless__ (I didn't write any js or templates), __developer-fo
 
 There's a reason it's called Safehouse, I guess.
 
-I've been developing the code as a personal defensive tool, but a couple of people have expressed interest in setting up copies for themselves, so I'm putting it online. The code is going to be going through some severe rearchitecturing over the next few weeks. This is my intro project to django and I'm already seeing a lot of things I want to fix.
+I've been developing the code as a personal defensive tool, but a couple of people have expressed interest in setting up copies for themselves, so I'm putting it online. The code is going through continuous mass rearchitecturing. This is my intro project to django and I'm alwats seeing stuff to fix.
 
 To Use
 ----
@@ -14,18 +14,15 @@ To Use
 1.  The code assumes you're using [Heroku](https://www.heroku.com/), but I think it should work on any other hosting. Note settings.py assumes postgres, so you'll have to modify it if you want to use MySQL.
 2. Get a [Twilio](twilio.com) account, and point a number at {applocation}/sms/. This is your Safehouse number.
 3. Add the config values for things in configvals.md.
-4. Run python manage.py syncdb to create all of the tables. Add contacts with the django admin page.
-  * Because South 1.0.0 is broken for Python3 (as of 8/9/14), we use 0.8.3, which breaks twilio-django. I'm going to get this fixed as soon as possible, but for now you _might_ have to delete the migration files in `venv/lib/python3.4/site-packages/django_twilio`.
+4. Run python manage.py syncdb to create all of the tables. Add contacts with the django admin page ({applocation}/admin).
+  * Because South 1.0.0 is broken for Python3 (as of 9/15/14), we use 0.8.3, which breaks twilio-django. I'm going to get this fixed as soon as possible (aka upgrade to django 1.7), but for now you _might_ have to delete the migration files in `venv/lib/python3.4/site-packages/django_twilio`.
 5. Text the safehouse number command codes to do things.
-  * Text the Safehouse number "inform" to let everyone know that they're part of your crazy anti-psychosis project. This will only text people who haven't been informed yet.
-  * Text the Safehouse number "panic N" to let N random friends know you need help.
-  * Text the Safehouse number "say `template` N" to send N friends the `template`. Just "say" will call the template `talk` for three people.
-    * You can add additional templates through the admin page for sms templates.
+  * See the 'routes' wiki page for more details on what you can text and how this works.
+6. Yell at me for not writing full documentation on how to use the Notifier feature.
 
 Future Changes
 ----
 
-* Upgrade to django 1.7 as soon as it's on pypi. That'll fix the Python3/South/Django-Twilio death triangle.
-* Ability to log messages directly as opposed to hacking it with "reflect".
+* Upgrade to django 1.7. That'll fix the Python3/South/Django-Twilio death triangle.
 * Delayed messages would be pretty cool, I think. (Sort of implemented with saved message tags... ish.)
 * Email functionality.
