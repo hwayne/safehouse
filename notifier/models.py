@@ -46,8 +46,7 @@ class Notifier(models.Model):
 
 
     def __str__(self):
-        return "\"{}\" | interval - {}, left - {}".format(self.pk,
-                                                          self.notify_text,
+        return "\"{}\" | interval - {}, left - {}".format(self.notify_text,
                                                           self.notify_interval,
                                                           self.notifies_left)
 
