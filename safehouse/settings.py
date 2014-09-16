@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django_nose',
     'journal',
     'panic',
+    'notifier',
     'sms',
 )
 
