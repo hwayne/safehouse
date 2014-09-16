@@ -2,6 +2,19 @@ from django.db import models
 from django.utils.timezone import now
 
 
+class NotifierManager(models.Manager):
+    def due_notifications(self):
+        """ Gets all due notifications. Note it DOES NOT get notifications
+        updated relatively soon, so as not to get swamped with notes every
+        hour.
+
+        NOTE: This means that modifying a notification in the admin database
+        WILL reset the notification interval. Either consider it 'pinged'
+        and act on it or use objects.filter.update to update it."""
+        return (m for m in self.all() if m.can_notify()
+                and (now() - m.updated_at).days >= m.notify_interval)
+
+
 class Notifier(models.Model):
     """ Model that tracks how long it's been since certain types of entries
         were placed in a table. Used to send notifies to me when, say,
@@ -29,10 +42,14 @@ class Notifier(models.Model):
     notifies_left = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    objects = NotifierManager()
 
 
     def __str__(self):
-        return self.notify_text
+        return "\"{}\" | interval - {}, left - {}".format(self.pk,
+                                                          self.notify_text,
+                                                          self.notify_interval,
+                                                          self.notifies_left)
 
     def get_model_class(self):
         """ Searches the project global for the django model who's name matches
@@ -82,3 +99,6 @@ class NotifierNumber(models.Model):
 
     notifier = models.ForeignKey(Notifier)
     phone_number = models.CharField(max_length=16)
+
+    def __str__(self):
+        return "{} | {}".format(self.phone_number, str(self.notifier))

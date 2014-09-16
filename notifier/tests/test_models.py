@@ -56,7 +56,7 @@ class NotifierQueryingTestCase(NotifierTestCase):
         self.assertEqual(self.test_list[1], model)
 
 
-class NotifierCannotifyTestCase(TestCase):
+class NotifierCanNotifyTestCase(TestCase):
 
     def setUp(self):
         self.mock_kwargs = {"model": "Notifier",
@@ -89,3 +89,33 @@ class NotifierCannotifyTestCase(TestCase):
                                     **self.kwargs
                                     )
         self.assertFalse(r.can_notify())
+
+
+class NotifierManagerTestCase(TestCase):
+
+    def setUp(self):
+        self.kwargs = {"model": "Notifier",
+                       "notifies_left": 1,
+                       "notify_text": "Foo",
+                       }
+
+    def testGetDueNotificationsGetsDue(self):
+        n = Notifier.objects.create(notify_interval=0,
+                                    **self.kwargs)
+        notifiers = Notifier.objects.due_notifications()
+        self.assertIn(n, notifiers)
+
+
+    def testGetDueNotificationsNotGetNotDue(self):
+        n = Notifier.objects.create(notify_interval=1,
+                                    **self.kwargs)
+        notifiers = Notifier.objects.due_notifications()
+        self.assertNotIn(n, notifiers)
+
+    def testDoesNotGetNotificationsUpdatedWithinInterval(self):
+        n = Notifier.objects.create(notify_interval=5,
+                                    **self.kwargs)
+        n.created_at -= timedelta(days=10)
+        n.save() # Makes updated_at NOW
+        notifiers = Notifier.objects.due_notifications()
+        self.assertNotIn(n, notifiers)
