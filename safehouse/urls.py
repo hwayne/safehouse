@@ -1,12 +1,11 @@
 from django.conf.urls import patterns, include, url
-# from settings import NUMBER
 
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
                        # Examples:
-                       url(r'^panic/', include('panic.urls')),
+                       url(r'^contact/', include('contact.urls')),
                        url(r'^sms/', include('sms.urls')),
                        # url(r'^$', 'safehouse.views.home', name='home'),
                        # url(r'^blog/', include('blog.urls')),

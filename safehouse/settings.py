@@ -40,7 +40,7 @@ INSTALLED_APPS = (
     'django_twilio',
     'django_nose',
     'journal',
-    'panic',
+    'contact',
     'notifier',
     'sms',
 )

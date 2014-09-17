@@ -31,7 +31,7 @@ class SmsParserTestCase(TestCase):
 
 
 from sms.models import Template
-from panic.models import Contact
+from contact.models import Contact
 class GetTemplaterTestCase(TestCase):
 
     def setUp(self):

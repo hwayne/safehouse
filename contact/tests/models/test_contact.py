@@ -1,5 +1,5 @@
 from django.test import TestCase
-from panic.models import Contact
+from contact.models import Contact
 
 
 class ContactTestCase(TestCase):

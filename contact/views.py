@@ -1,6 +1,6 @@
 from django.views import generic
 from django.http import HttpResponse
-from panic.models import Contact
+from contact.models import Contact
 
 
 class DetailView(generic.DetailView):

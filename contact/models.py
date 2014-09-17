@@ -48,11 +48,3 @@ class Contact(models.Model):
         return "{} {}".format(self.first_name, self.last_name)
 
 
-class Incident(models.Model):
-    incident_date = models.DateTimeField('Time of Incident')
-    contact_size = models.IntegerField()
-
-    def __str__(self):
-        return str(self.contact_size) + \
-            " people contacted at " + \
-            str(self.incident_date)

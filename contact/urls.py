@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from panic import views
+from contact import views
 
 
 urlpatterns = patterns('',
