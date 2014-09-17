@@ -4,7 +4,7 @@
     Has a dependency on routes.sms, which is okay because, well, you'll
     always have the sms app enabled if you're using it, right? """
 
-from panic.models import Contact  # COUPLING
+from contact.models import Contact  # COUPLING
 from sms.utils import get_templater
 from sms.routes.sms import config, model, pop_tag
 

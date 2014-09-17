@@ -2,7 +2,7 @@ from sms.tests.config import *
 from django.test import TestCase
 from unittest.mock import patch
 import sms.routes.contact as routes
-from panic.models import Contact
+from contact.models import Contact
 
 SAMPLE = 'sms.routes.contact.Contact.objects.sample'
 INFORM_ALL = 'sms.routes.contact.Contact.objects.inform_all'
