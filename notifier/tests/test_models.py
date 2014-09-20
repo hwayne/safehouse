@@ -69,27 +69,42 @@ class NotifierCanNotifyTestCase(TestCase):
                        "notify_text": "Test",
                        }
 
-    def testCannotify(self):
+    def testCanNotify(self):
         r = Notifier.objects.create(notify_interval=0,
                                     notifies_left=2,
                                     **self.kwargs
                                     )
         self.assertTrue(r.can_notify())
 
-    def testCannotnotifyIfOut(self):
+    def testCannotNotifyIfOut(self):
         r = Notifier.objects.create(notify_interval=0,
                                     notifies_left=0,
                                     **self.kwargs
                                     )
         self.assertFalse(r.can_notify())
 
-    def testCannotnotifyIfTooEarly(self):
+    def testCannotNotifyIfTooEarly(self):
         r = Notifier.objects.create(notify_interval=1,
                                     notifies_left=1,
                                     **self.kwargs
                                     )
         self.assertFalse(r.can_notify())
 
+    def testCannotNotifyIfInvalid(self):
+        n = Notifier.objects.create(notify_interval=0,
+                                    column="oogly",
+                                    column_val="boogly",
+                                    notifies_left=2,
+                                    **self.kwargs)
+        self.assertFalse(n.can_notify())
+
+    def testCannotnotifyIfColumnValMissing(self):
+        n = Notifier.objects.create(notify_interval=0,
+                                    column="column",
+                                    column_val="boogly",
+                                    notifies_left=2,
+                                    **self.kwargs)
+        self.assertFalse(n.can_notify())
 
 class NotifierManagerTestCase(TestCase):
 
@@ -119,3 +134,4 @@ class NotifierManagerTestCase(TestCase):
         n.save() # Makes updated_at NOW
         notifiers = Notifier.objects.due_notifications()
         self.assertNotIn(n, notifiers)
+

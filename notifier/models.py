@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+import django.core.exceptions as exception
 
 
 class NotifierManager(models.Manager):
@@ -73,9 +74,12 @@ class Notifier(models.Model):
         """ Returns whether or not a notify is due.
             Should be the only thing calling calling methods in this class. """
 
-        date_method = get_date_method(self.get_model_class())
-        most_recent = self.get_most_recent_model(date_method)
-        time_since_last = now() - getattr(most_recent, date_method)
+        try:
+            date_method = get_date_method(self.get_model_class())
+            most_recent = self.get_most_recent_model(date_method)
+            time_since_last = now() - getattr(most_recent, date_method)
+        except (IndexError, exception.FieldError):
+            return False
         if self.notifies_left != 0 \
                 and time_since_last.days >= self.notify_interval:
             return True
