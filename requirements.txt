@@ -1,4 +1,4 @@
-Django
+Django==1.7
 SocksiPy-branch==1.01
 South==0.8.4
 blessings==1.5.1
