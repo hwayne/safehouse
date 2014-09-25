@@ -14,8 +14,7 @@ To Use
 1.  The code assumes you're using [Heroku](https://www.heroku.com/), but I think it should work on any other hosting. Note settings.py assumes postgres, so you'll have to modify it if you want to use MySQL.
 2. Get a [Twilio](twilio.com) account, and point a number at {applocation}/sms/. This is your Safehouse number.
 3. Add the config values for things in configvals.md.
-4. Run python manage.py syncdb to create all of the tables. Add contacts with the django admin page ({applocation}/admin).
-  * Because South 1.0.0 is broken for Python3 (as of 9/15/14), we use 0.8.3, which breaks twilio-django. I'm going to get this fixed as soon as possible (aka upgrade to django 1.7), but for now you _might_ have to delete the migration files in `venv/lib/python3.4/site-packages/django_twilio`.
+4. Run python manage.py migrate to create all of the tables. Add contacts with the django admin page ({applocation}/admin).
 5. Text the safehouse number command codes to do things.
   * See the 'routes' wiki page for more details on what you can text and how this works.
 6. Yell at me for not writing full documentation on how to use the Notifier feature.
@@ -23,6 +22,6 @@ To Use
 Future Changes
 ----
 
-* Upgrade to django 1.7. That'll fix the Python3/South/Django-Twilio death triangle.
 * Delayed messages would be pretty cool, I think. (Sort of implemented with saved message tags... ish.)
+* A full customizable architecture for the notifier.
 * Email functionality.
