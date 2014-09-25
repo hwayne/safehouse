@@ -38,6 +38,8 @@ class Contact(models.Model):
     last_name = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=16)
     informed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     objects = ContactManager()
 
     def __str__(self):
