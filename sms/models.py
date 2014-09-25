@@ -5,6 +5,7 @@ from django import template
 class Message(models.Model):
     phone_number = models.CharField(max_length=16)
     message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "{}: {}".format(self.phone_number, self.message)
@@ -25,9 +26,6 @@ class SavedMessage(models.Model):
 
 
 def save_tagged_message(tag, phone_number, message):
-    print(tag)
-    print(phone_number)
-    print(message)
     SavedMessage(tag=tag, phone_number=phone_number, message=message).save()
 
 
