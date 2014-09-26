@@ -6,7 +6,7 @@ import django.core.exceptions as exception
 class NotifierManager(models.Manager):
     def due_notifications(self):
         """ Gets all due notifications. Note it DOES NOT get notifications
-        updated relatively soon, so as not to get swamped with notes every
+        updated in the last day, so as not to get swamped with notes every
         hour.
 
         NOTE: This means that modifying a notification in the admin database
@@ -78,7 +78,7 @@ class Notifier(models.Model):
             date_method = get_date_method(self.get_model_class())
             most_recent = self.get_most_recent_model(date_method)
             time_since_last = now() - getattr(most_recent, date_method)
-        except (IndexError, exception.FieldError):
+        except:
             return False
         if self.notifies_left != 0 \
                 and time_since_last.days >= self.notify_interval:

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import datetime
+from django.utils.timezone import now
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='message',
             name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=datetime.date(2014, 9, 25)),
+            field=models.DateTimeField(auto_now_add=True, default=now()),
             preserve_default=False,
         ),
     ]

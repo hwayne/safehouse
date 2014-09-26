@@ -13,11 +13,12 @@ To Use
 0. Copy the code and set it up on a server. Use a venv because venv is nice. Make sure it's a pyvenv3.4. You can install all of the required packages with just `pip install -r requirements`.
 1.  The code assumes you're using [Heroku](https://www.heroku.com/), but I think it should work on any other hosting. Note settings.py assumes postgres, so you'll have to modify it if you want to use MySQL.
 2. Get a [Twilio](twilio.com) account, and point a number at {applocation}/sms/. This is your Safehouse number.
-3. Add the config values for things in configvals.md.
-4. Run python manage.py migrate to create all of the tables. Add contacts with the django admin page ({applocation}/admin).
+3. Add the config values for things in CONFIGVALS.md.
+4. Run `python manage.py migrate` to create all of the tables. Add contacts with the django admin page ({applocation}/admin).
 5. Text the safehouse number command codes to do things.
-  * See the 'routes' wiki page for more details on what you can text and how this works.
+  * See the [routes](https://github.com/hwayne/safehouse/wiki/Routes) wiki page for more details on what you can text and how this works.
 6. Yell at me for not writing full documentation on how to use the Notifier feature.
+  * Read the almost full documentation on the [notifier]() wiki page.
 
 Future Changes
 ----
