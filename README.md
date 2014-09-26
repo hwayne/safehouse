@@ -18,7 +18,7 @@ To Use
 5. Text the safehouse number command codes to do things.
   * See the [routes](https://github.com/hwayne/safehouse/wiki/Routes) wiki page for more details on what you can text and how this works.
 6. Yell at me for not writing full documentation on how to use the Notifier feature.
-  * Read the almost full documentation on the [notifier]() wiki page.
+  * Read the almost full documentation on the [notifier](https://github.com/hwayne/safehouse/wiki/Notifier) wiki page.
 
 Future Changes
 ----
