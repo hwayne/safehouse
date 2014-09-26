@@ -5,7 +5,7 @@ Safehouse is a __headless__ (I didn't write any js or templates), __developer-fo
 
 There's a reason it's called Safehouse, I guess.
 
-I've been developing the code as a personal defensive tool, but a couple of people have expressed interest in setting up copies for themselves, so I'm putting it online. The code is going through continuous mass rearchitecturing. This is my intro project to django and I'm alwats seeing stuff to fix.
+I've been developing the code as a personal defensive tool, but a couple of people have expressed interest in setting up copies for themselves, so I'm putting it online. The code is going through continuous mass rearchitecturing. This is my intro project to django and I'm always seeing stuff to fix.
 
 To Use
 ----
