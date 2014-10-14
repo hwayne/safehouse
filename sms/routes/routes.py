@@ -10,7 +10,7 @@
     modules can extend.
 
     In addition to aggregating the other apps, this file also contains routes
-    that effect general use of routes, ie help and reflect. """
+    that effect general use of routes, ie help and echo. """
 
 from sms.routes.sms import sms_routes
 from sms.routes.contact import contact_routes
@@ -18,7 +18,7 @@ from sms.routes.journal import journal_routes
 from collections import defaultdict
 from functools import partial, update_wrapper
 
-def reflect(*args):
+def echo(*args):
     """ Returns all arguments back as a string. Is the default. """
     return " ".join(args)
 
@@ -31,10 +31,10 @@ def routes_help(route=None, routes_dict={}):
         return routes_dict[route].__doc__
     return ", ".join(sorted(routes_dict.keys()))
 
-ROUTES = defaultdict(lambda: reflect)
+ROUTES = defaultdict(lambda: echo)
 ROUTES.update(sms_routes)
 ROUTES.update(contact_routes)
 ROUTES.update(journal_routes)
-ROUTES.update({"help": update_wrapper(partial(routes_help, routes_dict=ROUTES),
+ROUTES.update({"info": update_wrapper(partial(routes_help, routes_dict=ROUTES),
                                       wrapped=routes_help),
                })

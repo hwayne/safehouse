@@ -4,17 +4,17 @@ from sms.routes.routes import ROUTES
 import sms.routes.routes as routes
 
 
-class ReflectTestCase(TestCase):
+class EchoTestCase(TestCase):
 
-    def testReflectTakesEmptyString(self):
-        routes.reflect()  # don't break!
+    def testEchoTakesEmptyString(self):
+        routes.echo()  # don't break!
 
-    def testReflectReturnsOneArgument(self):
-        output = routes.reflect("asd")
+    def testEchoReturnsOneArgument(self):
+        output = routes.echo("asd")
         self.assertEqual("asd", output)
 
-    def testReflectReturnsMultipleArguments(self):
-        output = routes.reflect("asd", "fgh")
+    def testEchoReturnsMultipleArguments(self):
+        output = routes.echo("asd", "fgh")
         self.assertEqual("asd fgh", output)
 
 
@@ -26,19 +26,19 @@ class HelpTestCase(TestCase):
         self.assertIn('c', output)
 
     def testAddingCommandGetsDocString(self):
-        output = routes.routes_help('help', ROUTES)
+        output = routes.routes_help('info', ROUTES)
         self.assertIn("docstring", output)
 
 class RoutesTestCase(TestCase):
 
-    def testDefaultsToReflect(self):
-        self.assertEqual(ROUTES['asdf'], routes.reflect)
+    def testDefaultsToEcho(self):
+        self.assertEqual(ROUTES['asdf'], routes.echo)
 
     def testCanCallHelp(self):
         ROUTES['help']("route")
 
-    #def testReflectCallsReflect(self):
-        #self.assertEqual(ROUTES['reflect'], routes.reflect)
+    #def testEchoCallsecho(self):
+        #self.assertEqual(ROUTES['echo'], routes.reflect)
 
     #def testInformCallsInform(self):
         #self.assertEqual(ROUTES['inform'], routes.inform)
