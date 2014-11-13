@@ -17,6 +17,7 @@ from sms.routes.contact import contact_routes
 from sms.routes.journal import journal_routes
 from collections import defaultdict
 from functools import partial, update_wrapper
+import sms.models as model
 
 def echo(*args):
     """ Returns all arguments back as a string. Is the default. """
@@ -31,10 +32,24 @@ def routes_help(route=None, routes_dict={}):
         return routes_dict[route].__doc__
     return ", ".join(sorted(routes_dict.keys()))
 
-ROUTES = defaultdict(lambda: echo)
+
+def default_route(routes_dict):
+    """ Given a routes dict, return the function in the route with the same key
+    as the value of the 'default' config. If no default, use echo."""
+    try:
+        default = model.Config.objects.get(key='default').val
+        if default not in routes_dict.keys(): #prevent default_factory recursion
+            raise KeyError
+        return routes_dict[default]
+    except (model.Config.DoesNotExist, KeyError):
+        return echo
+
+
+ROUTES = defaultdict()
 ROUTES.update(sms_routes)
 ROUTES.update(contact_routes)
 ROUTES.update(journal_routes)
 ROUTES.update({"info": update_wrapper(partial(routes_help, routes_dict=ROUTES),
                                       wrapped=routes_help),
                })
+ROUTES.default_factory = lambda: default_route(ROUTES)

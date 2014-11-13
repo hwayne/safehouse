@@ -32,10 +32,19 @@ class HelpTestCase(TestCase):
 class RoutesTestCase(TestCase):
 
     def testDefaultsToEcho(self):
-        self.assertEqual(ROUTES['asdf'], routes.echo)
+        routes.model.config("default", None)
+        self.assertEqual(ROUTES['abc'], routes.echo)
 
-    def testCanCallHelp(self):
-        ROUTES['help']("route")
+    def testDefaultsToDefaultIfDefaultIsSet(self):
+        routes.model.config("default", "info")
+        self.assertEqual(ROUTES['def'], ROUTES['info'])
+
+    def testDefaultsToEchoIfDefaultIsNotARoute(self):
+        routes.model.config("default", "praise yesoch")
+        self.assertEqual(ROUTES['ghi'], routes.echo)
+
+    def testCanCallInfo(self):
+        self.assertNotEqual(ROUTES['info']("route"), "route")
 
     #def testEchoCallsecho(self):
         #self.assertEqual(ROUTES['echo'], routes.reflect)

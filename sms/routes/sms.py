@@ -9,6 +9,7 @@ def config(key, val):
 
     ROUTES shouldn't have any direct connections to the model."""
     model.config(key, val)
+    return "set {} to {}".format(key, val)
 
 
 def pop_tag(tag):
