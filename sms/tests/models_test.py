@@ -1,6 +1,8 @@
 from sms.tests.config import *
 import sms.models as model
 from django.test import TestCase
+from django.utils.timezone import now
+from datetime import timedelta
 
 
 class ConfigTestCase(TestCase):
@@ -52,3 +54,27 @@ class PopMessageTagTestCase(TestCase):
     def testReturnsNoneIfNoTag(self):
         output = model.pop_message_tag('c')
         self.assertIs(None, output)
+
+class CreateFromDelayTestCase(TestCase):
+    def testCreatesDelayedWithOffsetDelay(self):
+        d1 = model.DelayedCommand.objects.create_from_delay(100, "bloog")
+        offset = now().replace(microsecond=0) + timedelta(minutes=100)
+        self.assertEqual(d1.send_at, offset)
+
+    def testWorksWithStringOffset(self):
+        d1 = model.DelayedCommand.objects.create_from_delay('100', "bloog")
+        offset = now().replace(microsecond=0) + timedelta(minutes=100)
+        self.assertEqual(d1.send_at, offset)
+
+class DueCommandsTestCase(TestCase):
+    def testGetsAllOverdueDelayedCommands(self):
+        d1 = model.DelayedCommand.objects.create_from_delay(-100, "bloog")
+        d2 = model.DelayedCommand.objects.create_from_delay(-100, "other")
+        self.assertSequenceEqual(model.DelayedCommand.objects.due_commands(),
+                                 [d1, d2])
+
+    def testDoesNotGetUnderdueCommands(self):
+        d1 = model.DelayedCommand.objects.create_from_delay(-100, "bloog")
+        d2 = model.DelayedCommand.objects.create_from_delay(100, "other")
+        self.assertSequenceEqual(model.DelayedCommand.objects.due_commands(),
+                                 [d1])

@@ -17,8 +17,10 @@ class TemplateView(generic.ListView):
 def index(request):
     from_number = clean_number(request.POST.get('From', '0'))
     message = request.POST.get('Body', '')
-    log_message(from_number, message)  # for posterity!
+    return getsms(from_number, message)
 
+def getsms(from_number, message):
+    log_message(from_number, message)  # for posterity!
     if from_number == MY_NUMBER:
         route = parse_message(message)
         route_function = ROUTES[route['route']]

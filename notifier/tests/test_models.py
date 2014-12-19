@@ -106,6 +106,7 @@ class NotifierCanNotifyTestCase(TestCase):
                                     **self.kwargs)
         self.assertFalse(n.can_notify())
 
+
 class NotifierManagerTestCase(TestCase):
 
     def setUp(self):

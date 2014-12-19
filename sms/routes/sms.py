@@ -27,9 +27,19 @@ def make_template(name, text):
     model.Template.objects.create(name=name, text=text)
 
 
+def delay(delay, *commands):
+    """Given a string of form [delay], {command 1; command 2; ...}
+    store each command as a delayed command to send later.
+    Delay is in minutes. """
+    commands = " ".join(commands).split(';')
+    for command in commands:
+        model.DelayedCommand.objects.create_from_delay(delay, command)
+
+
 sms_routes = {"set": config,
-               "unset": partial(config, val=None),
-               "listen": lambda x: str(pop_tag(x)),
-               "save_sms_template": make_template,
-               "save-sms-template": make_template,
-               }
+              "unset": partial(config, val=None),
+              "listen": lambda x: str(pop_tag(x)),
+              "delay": delay,
+              "save_sms_template": make_template,
+              "save-sms-template": make_template,
+              }
