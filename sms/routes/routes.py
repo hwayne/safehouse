@@ -51,5 +51,6 @@ ROUTES.update(contact_routes)
 ROUTES.update(journal_routes)
 ROUTES.update({"info": update_wrapper(partial(routes_help, routes_dict=ROUTES),
                                       wrapped=routes_help),
+               "echo": echo,
                })
 ROUTES.default_factory = lambda: default_route(ROUTES)

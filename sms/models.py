@@ -1,5 +1,7 @@
 from django.db import models
 from django import template
+from django.utils.timezone import now
+from datetime import timedelta
 
 
 class Message(models.Model):
@@ -70,4 +72,23 @@ class Template(models.Model):
         return template.Template(self.text)
 
 
+class DelayedCommandManager(models.Manager):
+    def create_from_delay(self, delay, command):
+        """Delay is in minutes."""
+        send_at = now().replace(microsecond=0) + timedelta(minutes=int(delay))
+        return DelayedCommand.objects.create(send_at=send_at, command=command)
 
+    def due_commands(self):
+        return DelayedCommand.objects.filter(send_at__lte=now())
+
+class DelayedCommand(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    command = models.TextField()
+    send_at = models.DateTimeField()
+    objects = DelayedCommandManager()
+
+    def __str__(self):
+        return "{}: {}".format(self.send_at, self.command)
+
+    def get_command(self):
+        return self.command
